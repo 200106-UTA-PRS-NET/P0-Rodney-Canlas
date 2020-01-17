@@ -5,16 +5,10 @@ namespace PizzaBox.Domain.Models
 {
     public partial class Account
     {
-        public Account()
-        {
-            UserOrder = new HashSet<UserOrder>();
-        }
-
+        public int UserId { get; set; }
         public string Username { get; set; }
-        public string Password { get; set; }
+        public string Passphrase { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-
-        public virtual ICollection<UserOrder> UserOrder { get; set; }
     }
 }

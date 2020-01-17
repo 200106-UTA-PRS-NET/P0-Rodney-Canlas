@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text.Json;
 using PizzaBox.Domain.Models;
 using PizzaBox.Storing.Repositories;
+
+
 
 namespace PizzaBox.Client
 {
@@ -11,38 +11,29 @@ namespace PizzaBox.Client
         static void Main(string[] args)
         {
 
-            while (true)
+            bool isAdmin = false;
+            bool validUser = false;
+            bool loggedIn = false;
+
+            UIHandling.Intro();
+            if (UIHandling.ReturningMember())
             {
-                string returning = UIHandling.Intro();
-                switch (returning)
-                {
-                    case "y":
-                        Console.Clear();
-                        
-                        string[] userCredentials = UIHandling.SigningIn();
-                        bool isValidUser = DataHandling.IsValidUser(userCredentials[0], userCredentials[1]);
-                        
-                        if (isValidUser)
-                        {
-                            UIHandling.PlacingOrder();
-                        } else
-                        {
-                            UIHandling.CreatingAccount();
-                        }
-                        break;
-                    case "n":
-                        Console.Clear();
-                        UIHandling.CreatingAccount();
-                        break;
-                    default:
-                        Console.Clear();
-                        UIHandling.InvalidResponse();
-                        break;
-
-                } 
+                UIHandling.SigningIn(ref isAdmin, ref validUser, ref loggedIn);
             }
-
-
+            else
+            {
+                UIHandling.CreatingAccount();
+                UIHandling.SigningIn(ref isAdmin, ref validUser, ref loggedIn);
+            }
+            while (!validUser)
+            {
+                UIHandling.CreatingAccount();
+                UIHandling.SigningIn(ref isAdmin, ref validUser, ref loggedIn);
+            }
+            if (validUser && loggedIn)
+            {
+                Console.WriteLine("You are logged in!");
+            }
         }
     }
 }

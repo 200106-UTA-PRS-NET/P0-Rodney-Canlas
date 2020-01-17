@@ -16,110 +16,65 @@ namespace PizzaBox.Domain.Models
         }
 
         public virtual DbSet<Account> Account { get; set; }
-        public virtual DbSet<Inventory> Inventory { get; set; }
-        public virtual DbSet<Location> Location { get; set; }
+        public virtual DbSet<Store> Store { get; set; }
         public virtual DbSet<UserOrder> UserOrder { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=DESKTOP-8AEKDMJ\\SQLEXPRESS;Database=StoreDB;trusted_connection=true;");
-            }
+            //deleted
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Account>(entity =>
             {
-                entity.HasKey(e => e.Username)
-                    .HasName("PK__Account__536C85E53F1AD4B5");
+                entity.HasKey(e => e.UserId)
+                    .HasName("pk_Username");
 
                 entity.ToTable("Account", "PizzaBox");
 
-                entity.Property(e => e.Username)
-                    .HasMaxLength(16)
-                    .IsUnicode(false);
+                entity.Property(e => e.UserId).HasColumnName("UserID");
 
                 entity.Property(e => e.FirstName)
                     .IsRequired()
-                    .HasMaxLength(16)
                     .IsUnicode(false);
 
                 entity.Property(e => e.LastName)
                     .IsRequired()
-                    .HasMaxLength(16)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Password)
+                entity.Property(e => e.Passphrase)
                     .IsRequired()
-                    .HasMaxLength(16)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Username)
+                    .IsRequired()
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<Inventory>(entity =>
+            modelBuilder.Entity<Store>(entity =>
             {
-                entity.HasNoKey();
+                entity.ToTable("Store", "PizzaBox");
 
-                entity.ToTable("Inventory", "PizzaBox");
-
-                entity.Property(e => e.CheesePizza).HasDefaultValueSql("((500))");
-
-                entity.Property(e => e.ChickenTopping).HasDefaultValueSql("((500))");
-
-                entity.Property(e => e.JalapenoTopping).HasDefaultValueSql("((500))");
-
-                entity.Property(e => e.LocationId).HasColumnName("LocationID");
-
-                entity.Property(e => e.MarinaraSauce).HasDefaultValueSql("((500))");
-
-                entity.Property(e => e.PepperoniPizza).HasDefaultValueSql("((500))");
-
-                entity.Property(e => e.PepperoniTopping).HasDefaultValueSql("((500))");
-
-                entity.Property(e => e.PineappleTopping).HasDefaultValueSql("((500))");
-
-                entity.Property(e => e.SausageTopping).HasDefaultValueSql("((500))");
-
-                entity.Property(e => e.ThickCrust).HasDefaultValueSql("((500))");
-
-                entity.Property(e => e.ThinCrust).HasDefaultValueSql("((500))");
-
-                entity.Property(e => e.VegetarianPizza).HasDefaultValueSql("((500))");
-
-                entity.Property(e => e.VeggieTopping).HasDefaultValueSql("((500))");
-
-                entity.Property(e => e.WhiteGarlicSauce).HasDefaultValueSql("((500))");
-
-                entity.HasOne(d => d.Location)
-                    .WithMany(p => p.Inventory)
-                    .HasForeignKey(d => d.LocationId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_LocationIDInventory");
-            });
-
-            modelBuilder.Entity<Location>(entity =>
-            {
-                entity.ToTable("Location", "PizzaBox");
-
-                entity.Property(e => e.LocationId).HasColumnName("LocationID");
+                entity.Property(e => e.StoreId).HasColumnName("StoreID");
 
                 entity.Property(e => e.City)
                     .IsRequired()
-                    .HasMaxLength(20)
                     .IsUnicode(false);
 
                 entity.Property(e => e.State)
                     .IsRequired()
-                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.StoreName)
+                    .IsRequired()
                     .IsUnicode(false);
             });
 
             modelBuilder.Entity<UserOrder>(entity =>
             {
                 entity.HasKey(e => e.OrderId)
-                    .HasName("PK__UserOrde__C3905BAF29314A6E");
+                    .HasName("pk_OrderID");
 
                 entity.ToTable("UserOrder", "PizzaBox");
 
@@ -127,28 +82,13 @@ namespace PizzaBox.Domain.Models
 
                 entity.Property(e => e.CustomPizza).HasDefaultValueSql("((0))");
 
-                entity.Property(e => e.LocationId).HasColumnName("LocationID");
-
                 entity.Property(e => e.PresetPizza).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.StoreId).HasColumnName("StoreID");
 
                 entity.Property(e => e.TotalCost).HasColumnType("money");
 
-                entity.Property(e => e.Username)
-                    .IsRequired()
-                    .HasMaxLength(16)
-                    .IsUnicode(false);
-
-                entity.HasOne(d => d.Location)
-                    .WithMany(p => p.UserOrder)
-                    .HasForeignKey(d => d.LocationId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_LocationID");
-
-                entity.HasOne(d => d.UsernameNavigation)
-                    .WithMany(p => p.UserOrder)
-                    .HasForeignKey(d => d.Username)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_Username");
+                entity.Property(e => e.UserId).HasColumnName("UserID");
             });
 
             OnModelCreatingPartial(modelBuilder);

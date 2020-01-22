@@ -8,8 +8,8 @@ namespace PizzaBox.Domain.Models
         public int OrderId { get; set; }
         public int StoreId { get; set; }
         public int UserId { get; set; }
-        public int? PresetPizza { get; set; }
-        public int? CustomPizza { get; set; }
+        public string OrderContent { get; set; }
         public decimal TotalCost { get; set; }
+        public DateTime OrderDateTime { get; set; }
     }
 }

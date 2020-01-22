@@ -21,7 +21,7 @@ namespace PizzaBox.Domain.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //deleted
+            //Intentionally blank
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -80,9 +80,13 @@ namespace PizzaBox.Domain.Models
 
                 entity.Property(e => e.OrderId).HasColumnName("OrderID");
 
-                entity.Property(e => e.CustomPizza).HasDefaultValueSql("((0))");
+                entity.Property(e => e.OrderContent)
+                    .IsRequired()
+                    .IsUnicode(false);
 
-                entity.Property(e => e.PresetPizza).HasDefaultValueSql("((0))");
+                entity.Property(e => e.OrderDateTime)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.StoreId).HasColumnName("StoreID");
 

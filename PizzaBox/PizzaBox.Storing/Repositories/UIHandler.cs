@@ -683,7 +683,7 @@ namespace PizzaBox.Storing.Repositories
                 Console.Write("\nHow many of this pizza do you want? ");
                 string countInput = Console.ReadLine();
 
-                if (!IsDigitsOnly(countInput))
+                if (!IsDigitsOnly(countInput) || (countInput.Length >= 8))
                 {
                     validInput3 = false;
                     InvalidResponse();

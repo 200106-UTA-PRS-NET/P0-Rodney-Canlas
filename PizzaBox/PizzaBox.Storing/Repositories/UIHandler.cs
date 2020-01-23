@@ -187,11 +187,20 @@ namespace PizzaBox.Storing.Repositories
             Console.ReadLine();
 
             decimal totalCost;
-            int storeID = ChoosingLocation(in currUser, in isMakingOrder);
-            string pizzaType = ChoosingPizzaType();
+            bool doneOrdering = false;
+            string pizzaType = "";
             List<Pizza> orderContent = new List<Pizza>();
 
-            bool doneOrdering = false;
+            int storeID = ChoosingLocation(in currUser, in isMakingOrder);
+            if (storeID == 0)
+            {
+                doneOrdering = true;
+            }
+            else
+            {
+                pizzaType = ChoosingPizzaType();
+            }
+
             while (!doneOrdering)
             {
                 bool validResponse = false;
@@ -449,6 +458,7 @@ namespace PizzaBox.Storing.Repositories
                 Console.WriteLine("1. Giant Caesars");
                 Console.WriteLine("2. Mama Johns");
                 Console.WriteLine("3. Pizza Igloo");
+                Console.WriteLine("\n0. Go back to main menu.");
                 Console.Write("\nPlease choose a store to order from: ");
                 string userInput = Console.ReadLine();
 
@@ -508,6 +518,8 @@ namespace PizzaBox.Storing.Repositories
                             return 3;
                         }
                         break;
+                    case "0":
+                        return 0;
                     default:
                         validResponse = false;
                         InvalidResponse();
@@ -912,9 +924,15 @@ namespace PizzaBox.Storing.Repositories
             Console.WriteLine("You are accessing store data.");
             Console.ReadLine();
 
-            int storeID = ChoosingLocation(in currUser, in isMakingOrder);
-
             bool validInput = false;
+
+            int storeID = ChoosingLocation(in currUser, in isMakingOrder);
+            if (storeID == 0)
+            {
+                validInput = true;
+            }
+
+            
             while (!validInput)
             {
                 string storeName = DataHandler.GetStoreNameByID(storeID);
@@ -959,7 +977,7 @@ namespace PizzaBox.Storing.Repositories
             Console.Clear();
             Console.WriteLine($"Viewing completed order for {storeName}.");
             Console.WriteLine("");
-            Console.WriteLine("   Order  User  Pizzas   Cost     Date/Time");
+            Console.WriteLine("   Order  UserID  Pizzas   Cost       Date/Time");
             Console.WriteLine("-----------------------------------------------------");
             
             int i = 1;
@@ -971,8 +989,12 @@ namespace PizzaBox.Storing.Repositories
 
                 string m = "$";
                 string totalCost = String.Format("{0:0.00}", order.TotalCost);
-                Console.WriteLine($"{i}.   {order.OrderId}     {order.UserId}       {numOfPizza}   " +
-                    $" {m}{totalCost}    {order.OrderDateTime} ");
+                string orderID = String.Format("{0, -4}", order.OrderId);
+                string userID = String.Format("{0, -5}", order.UserId);
+                string numPizzas = String.Format("{0, -5}", numOfPizza);
+                string cost = String.Format("{0, -5}", totalCost);
+                string dateTime = String.Format("{0, -5}", order.OrderDateTime);
+                Console.WriteLine($"{i}.  #{orderID}   {userID}  {numPizzas} {m}{cost}    {dateTime}");
 
                 i += 1;
             }
@@ -982,7 +1004,6 @@ namespace PizzaBox.Storing.Repositories
 
         private static void ViewSales(int storeID, string storeName)
         {
-            //var sales = DataHandler.GetSalesByStoreID(storeID);
             Console.Clear();
             Console.WriteLine("You are viewing sales.");
             Console.WriteLine();
@@ -1022,19 +1043,23 @@ namespace PizzaBox.Storing.Repositories
             }
 
             Console.WriteLine("------------Pizzas------------");
-            Console.WriteLine("Amount Sold       Item");
+            Console.WriteLine(" Amount Sold       Item");
 
             foreach (string item in pizzaSalesCounter.Keys)
             {
-                Console.WriteLine($"    {pizzaSalesCounter[item]}      {item}");
+                string amount = String.Format("{0, -5}", pizzaSalesCounter[item]);
+                string thing = String.Format("{0, 8}", item);
+                Console.WriteLine($"     {amount}    {thing}");
             }
 
             Console.WriteLine("\n------------Toppings------------");
-            Console.WriteLine("Amount Sold       Item");
+            Console.WriteLine(" Amount Sold       Item");
 
             foreach (string item in toppingSalesCounter.Keys)
             {
-                Console.WriteLine($"    {toppingSalesCounter[item]}      {item}");
+                string amount = String.Format("{0, -5}", toppingSalesCounter[item]);
+                string thing = String.Format("{0, 8}", item);
+                Console.WriteLine($"     {amount}    {thing}");
             }
 
             Console.Write("\nPlease press Enter when finished viewing. ");
@@ -1056,7 +1081,9 @@ namespace PizzaBox.Storing.Repositories
             {
                 string firstName = user.FirstName.ToLower();
                 string lastName = user.LastName.ToLower();
-                Console.WriteLine($"{i}. {firstName} {lastName} | {user.Username}");
+                string fullName = $"{firstName} {lastName}";
+                Console.WriteLine($"{i}. {fullName} ({user.Username})");
+        
                 i += 1;
             }
 

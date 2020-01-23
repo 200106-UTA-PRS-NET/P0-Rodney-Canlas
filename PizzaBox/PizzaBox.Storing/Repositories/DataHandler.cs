@@ -136,14 +136,20 @@ namespace PizzaBox.Storing.Repositories
 
             if (relevantOrders.Any(o => o.UserId == currUserID))
             {
-                UserOrder lastOrderByUser = relevantOrders.OrderByDescending(o => o.UserId == currUserID).FirstOrDefault();
+                var ordersByUser = from o in relevantOrders
+                                   where o.UserId == currUserID
+                                   select o;
+
+                UserOrder lastOrderByUser = ordersByUser.OrderBy(o => o.UserId == currUserID).Last();
+
+                //UserOrder lastOrderByUser = relevantOrders.OrderBy();
                 DateTime lastOrderDateTime = lastOrderByUser.OrderDateTime;
 
                 TimeSpan orderGap = DateTime.Now - lastOrderDateTime;
                 
-                Console.WriteLine(orderGap.TotalDays);
-
-
+                //Console.WriteLine(orderGap.TotalDays);
+                //Console.ReadLine();
+               
                 if (orderGap.TotalDays >= 1)
                 {
                     return true;
@@ -188,7 +194,7 @@ namespace PizzaBox.Storing.Repositories
                         on user.UserId equals order.UserId
                         select user;
             
-            return users;
+            return users.Distinct();
         }
     }
 }

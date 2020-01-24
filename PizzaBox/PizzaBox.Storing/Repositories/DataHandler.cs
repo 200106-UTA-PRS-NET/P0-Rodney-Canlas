@@ -12,6 +12,15 @@ namespace PizzaBox.Storing.Repositories
     {
         private static StoreDBContext db = DatabaseAccess.GetDatabase();
 
+        /** <summary> 
+         *  Checks if the given USERNAME and PASSWORD are associated 
+         *      with an account. 
+         *  </summary>
+         *  <returns> 
+         *  Returns true if USERNAME and PASSWORD matches to an 
+         *      account; otherwise, returns false.
+         *  </returns>
+         */
         public static bool IsValidUser(string username, string password)
         {
             if (db.Account.Any(a => a.Username == username && a.Passphrase == password))
@@ -21,6 +30,15 @@ namespace PizzaBox.Storing.Repositories
             return false;
         }
 
+        /** <summary>
+         *  Checks if the given USERNAME is "admin" and the PASSWORD is associated
+         *      with an the USERNAME.
+         *  </summary>
+         *  <returns>
+         *  Returns true if USERNAME is "admin" and PASSWORD is "password"; 
+         *      otherwise, returns false.
+         *  </returns>
+         */
         public static bool IsAdmin(string username, string password)
         {
             if (username == "admin" && password == "password")
@@ -30,6 +48,16 @@ namespace PizzaBox.Storing.Repositories
             return false;
         }
 
+        /** <summary>
+         *  Checks if the given USERNAME already exists in the StoreDB.Account table.
+         *      If it does not, it will create and update the table with a new user 
+         *      with the passed-in credentials. 
+         *  </summary>
+         *  <returns>
+         *  Returns true if the USERNAME does not exist yet; otherwise,
+         *      returns false.
+         *  </returns>
+         */
         public static bool CanCreateAccount(string firstName, string lastName, string username, string password)
         {
             if (db.Account.Any(a => a.Username == username))
@@ -50,6 +78,7 @@ namespace PizzaBox.Storing.Repositories
 
         }
 
+        // <summary> Adds a new order to the StoreDB.UserOrder table. </summary>
         public static void AddOrder(Account currUser, int storeID, List<Pizza> orderContent, decimal totalCost)
         {
             int userID = currUser.UserId;
@@ -69,6 +98,9 @@ namespace PizzaBox.Storing.Repositories
             db.SaveChanges();
         }
 
+        /** <summary> Gets the UserID of the given USERNAME. </summary>
+         *  <returns> Returns the user's ID. </returns>
+         */
         public static int GetUserID(string username)
         {
             var query = from u in db.Account
@@ -78,6 +110,9 @@ namespace PizzaBox.Storing.Repositories
             return query.First().UserId;
         }
 
+        /** <summary> Gets a store's name given a STOREID. </summary>
+         *  <returns> Returns the store's name. </returns>
+         */
         public static string GetStoreNameByID(int storeID)
         {
             if (db.Store.Any(s => s.StoreId == storeID))
@@ -90,6 +125,9 @@ namespace PizzaBox.Storing.Repositories
            
         }
 
+        /** <summary> Serializes a List object, which holds Pizza objects, into a string. </summary>
+         *  <returns> Returns the serialized list of pizzas. </returns>
+         */
         private static string SerializeToXMLString(List<Pizza> orderContent) 
         {
             using (StringWriter strWriter = new StringWriter())
@@ -100,6 +138,9 @@ namespace PizzaBox.Storing.Repositories
             }
         }
 
+        /** <summary> Deserializes a string to a List object, which holds Pizza objects. </summary>
+         *  <returns> Returns a List object, which holds Pizza objects. </returns>
+         */
         public static List<Pizza> DeserializeFromXMLString(string xml)
         {
             var serializer = new XmlSerializer(typeof(List<Pizza>));
@@ -110,6 +151,9 @@ namespace PizzaBox.Storing.Repositories
             }
         }
 
+        /** <summary> Gets the orders that match a store's ID. </summary>
+         *  <returns> Returns a set of orders. </returns>
+         */
         public static IQueryable<UserOrder> GetOrdersByStoreID(int storeID)
         {
             var orders = from o in db.UserOrder
@@ -119,6 +163,9 @@ namespace PizzaBox.Storing.Repositories
             return orders;
         }
 
+        /** <summary> Gets the orders that match a user's ID. </summary>
+         *  <returns> Returns a set of orders. </returns>
+         */
         public static IQueryable<UserOrder> GetOrdersByUserID(int userID)
         {
             var orders = from o in db.UserOrder
@@ -128,6 +175,15 @@ namespace PizzaBox.Storing.Repositories
             return orders;
         }
 
+        /** <summary> 
+         *  Checks if the current user can order from the store
+         *      that has a matching ID. 
+         *  </summary>
+         *  <returns> 
+         *  Returns true if the current user has not ordered
+         *      from the store within 24 hours; otherwise, returns false.
+         *  </returns>
+         */
         public static bool CanOrderFromLocation(in Account currUser, int storeID)
         {
             int currUserID = currUser.UserId;
@@ -140,15 +196,10 @@ namespace PizzaBox.Storing.Repositories
                                    where o.UserId == currUserID
                                    select o;
 
-                UserOrder lastOrderByUser = ordersByUser.OrderBy(o => o.UserId == currUserID).Last();
-
-                //UserOrder lastOrderByUser = relevantOrders.OrderBy();
+                UserOrder lastOrderByUser = ordersByUser.OrderBy(o => o.OrderDateTime).Last();
                 DateTime lastOrderDateTime = lastOrderByUser.OrderDateTime;
 
                 TimeSpan orderGap = DateTime.Now - lastOrderDateTime;
-                
-                //Console.WriteLine(orderGap.TotalDays);
-                //Console.ReadLine();
                
                 if (orderGap.TotalDays >= 1)
                 {
@@ -163,6 +214,9 @@ namespace PizzaBox.Storing.Repositories
             }
         }
 
+        /** <summary> Gets the user given the USERNAME. </summary>
+         *  <returns> Returns the user. </returns>
+         */
         public static Account GetUserByUsername(string username)
         {
             int userID = GetUserID(username);
@@ -170,6 +224,17 @@ namespace PizzaBox.Storing.Repositories
             return db.Account.Find(userID);
         }
 
+        /** <summary> 
+         *  Stores a set of stores into a Dictionary object, with 
+         *      the store's ID as the key and the store's name as
+         *      the value.
+         *  </summary>
+         *  <returns>
+         *  Returns a Dictionary object, with 
+         *      the store's ID as the key and the store's name as
+         *      the value.
+         *  </returns>
+         */
         public static Dictionary<int, string> ListOfStores()
         {
             Dictionary<int, string> result = new Dictionary<int, string>();
@@ -185,6 +250,12 @@ namespace PizzaBox.Storing.Repositories
             return result;
         }
 
+        /** <summary> 
+         *  Gets a set of users from StoreDB.UserOrders that 
+         *      match the given STOREID.     
+         *  </summary>
+         *  <returns> Returns a set of users. </returns>
+         */
         public static IQueryable<Account> GetUsersByStoreID(int storeID)
         {
             var orders = GetOrdersByStoreID(storeID);

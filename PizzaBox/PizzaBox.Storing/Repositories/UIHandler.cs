@@ -9,12 +9,18 @@ namespace PizzaBox.Storing.Repositories
 {
     public static class UIHandler
     {
-        //Provides an introduction message to the user.
+        // Provides an introductory message to the user.
         public static void Intro()
         {
             Console.WriteLine("Hello! Welcome to PizzaBox, where you can order pizza.");
         }
 
+        /** <summary> Asks the user if they're a returning member. </summary>
+         *  <returns> 
+         *  Returns true, if the user says yes; otherwise,
+         *      returns false.
+         *  </returns>
+         */
         public static bool ReturningUser()
         {
             bool validResponse = false;
@@ -43,7 +49,7 @@ namespace PizzaBox.Storing.Repositories
             return returningUser;
         }
 
-        //Provides UI for the user to create an account.
+        // Provides UI for the user to create an account.
         public static void CreatingAccount()
         {
             bool canCreateAccount = false;
@@ -72,7 +78,7 @@ namespace PizzaBox.Storing.Repositories
             }
         }
 
-        //Provides UI for signing in.
+        // Provides UI for signing in.
         public static void SigningIn(ref string username, ref bool isAdmin, ref bool validUser, ref bool loggedIn)
         {
             Console.Clear();
@@ -100,6 +106,7 @@ namespace PizzaBox.Storing.Repositories
             }
         }
         
+        // Provides UI for signing out.
         public static void SigningOut(ref bool isAdmin, ref bool validUser, ref bool loggedIn)
         {
             isAdmin = false;
@@ -110,6 +117,7 @@ namespace PizzaBox.Storing.Repositories
             Console.ReadLine();
         }
 
+        // Provides the menu UI for the admin.
         public static string AdminMenu(in Account currUser)
         {
             Console.Clear();
@@ -121,6 +129,8 @@ namespace PizzaBox.Storing.Repositories
             bool validInput = false;
             while (!validInput)
             {
+                Console.Clear();
+
                 Console.WriteLine($"Welcome to the ADMIN menu, {currUser.Username}!");
                 Console.WriteLine("1. Make an order.");
                 Console.WriteLine("2. Access store data.");
@@ -140,6 +150,7 @@ namespace PizzaBox.Storing.Repositories
             return userInput;
         }
 
+        // Provides the menu UI for the user.
         public static string UserMenu(Account currUser)
         {
             Console.Clear();
@@ -151,6 +162,8 @@ namespace PizzaBox.Storing.Repositories
 
             while (!validInput)
             {
+                Console.Clear();
+
                 Console.WriteLine($"Welcome to the USER menu, {currUser.Username}!");
                 Console.WriteLine("1. Make an order.");
                 Console.WriteLine("2. View order history.");
@@ -161,7 +174,6 @@ namespace PizzaBox.Storing.Repositories
                 if (!validInputs.Contains(userInput))
                 {
                     InvalidResponse();
-                    Console.Read();
                 } else
                 {
                     validInput = true;
@@ -170,6 +182,9 @@ namespace PizzaBox.Storing.Repositories
             return userInput;
         }
 
+        /** <summary> Stores the given array of strings into a set. </summary>
+         *  <returns> Returns the set. </returns>
+         */
         private static HashSet<string> ValidInputs(string[] validInputs)
         {
             HashSet<string> inputs = new HashSet<string>();
@@ -180,6 +195,7 @@ namespace PizzaBox.Storing.Repositories
             return inputs;
         }
 
+        // Provides the UI for making an order. 
         public static void MakingOrder(in Account currUser, in bool isMakingOrder)
         {
             Console.Clear();
@@ -196,13 +212,11 @@ namespace PizzaBox.Storing.Repositories
             {
                 doneOrdering = true;
             }
-            else
-            {
-                pizzaType = ChoosingPizzaType();
-            }
-
+                
             while (!doneOrdering)
             {
+                pizzaType = ChoosingPizzaType();
+
                 bool validResponse = false;
                 while (!validResponse)
                 {
@@ -325,6 +339,7 @@ namespace PizzaBox.Storing.Repositories
             }
         }
 
+        // Provides a message for exceeding the cost limit.
         private static void CostsLimitExceeded()
         {
             Console.Clear();
@@ -332,6 +347,12 @@ namespace PizzaBox.Storing.Repositories
             Console.ReadLine();
         }
 
+        /** <summary> 
+         *  Deletes the order by setting the ORDERCONTENT and TOTALCOST to 
+         *      NULL and 0, respectively.
+         *      Provides a message for deleting the order.
+         *  </summary>
+         */
         private static void DeletingOrder(ref List<Pizza> orderContent, ref decimal totalCost)
         {
             orderContent = null;
@@ -341,6 +362,12 @@ namespace PizzaBox.Storing.Repositories
             Console.ReadLine();
         }
 
+        /** <summary> 
+         *  Adds the order to StoreDB.UserOrder if the cost is greater than 0 and 
+         *      provides a message for confirming the order; otherwise, provides a
+         *      message for declining the order.
+         *  </summary>
+         */
         private static void ConfirmingOrder(Account currUser, int storeID, ref List<Pizza> orderContent, ref decimal totalCost)
         {
             if (totalCost > 0) {
@@ -359,6 +386,8 @@ namespace PizzaBox.Storing.Repositories
             }
         }
 
+
+        // Provides UI for adding the order.
         private static void AddingToOrder()
         {
             Console.Clear();
@@ -366,6 +395,9 @@ namespace PizzaBox.Storing.Repositories
             Console.ReadLine();
         }
 
+        /** <summary> Calculates the total cost of the pizzas in an order </summary>
+         *  <returns> Returns the total cost of the order. </returns>
+         */
         private static decimal TotalCost(List<Pizza> orderContent)
         {
             decimal totalCost = 0;
@@ -387,6 +419,7 @@ namespace PizzaBox.Storing.Repositories
             return totalCost;
         }
 
+        // Provides the UI for deciding what to do once an initial order is made.
         private static string Deciding(List<Pizza> orderContent, decimal totalCost)
         {
             Console.Clear();
@@ -428,6 +461,9 @@ namespace PizzaBox.Storing.Repositories
             return "";
         }
 
+        /** <summary> Creates a string from a list of toppings separated by a space. </summary>
+         *  <returns> Returns the string of toppings. </returns>
+         */
         private static string ConvertListToppingsToString(List<string> toppings)
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -439,6 +475,9 @@ namespace PizzaBox.Storing.Repositories
             return stringBuilder.ToString();
         }
 
+        /** <summary> Adds a number of pizza into a list. </summary>
+         *  <returns> Returns the list of pizzas. </returns>
+         */
         private static List<Pizza> StartingOrder(Pizza pizza, List<Pizza> orderContent, int count)
         {
             for (int i = 0; i < count; i++)
@@ -448,6 +487,7 @@ namespace PizzaBox.Storing.Repositories
             return orderContent;
         }
 
+        // Provides UI for choosing a store.
         private static int ChoosingLocation(in Account currUser, in bool isMakingOrder)
         {
             bool validResponse = false;
@@ -528,13 +568,15 @@ namespace PizzaBox.Storing.Repositories
             }
             return 0;
         }
-
+        
+        // Checks if current user can order from a store.
         private static bool CanOrderFromLocation(in Account currUser, string userInput)
         {
             int storeID = ToDigits(userInput);
             return DataHandler.CanOrderFromLocation(in currUser, storeID);
         }
 
+        // Provides a message for not being able to order from location.
         private static void CannotOrderFromLocation()
         {
             Console.Clear();
@@ -542,6 +584,7 @@ namespace PizzaBox.Storing.Repositories
             Console.ReadLine();
         }
 
+        // Provides UI for choosing pizza type.
         private static string ChoosingPizzaType()
         {
             bool validInput = false;
@@ -571,6 +614,7 @@ namespace PizzaBox.Storing.Repositories
             return "";
         }
 
+        // Provides UI for designing preset pizza.
         private static Pizza DesigningPresetPizza(ref int count)
         {
             Console.Clear();
@@ -712,6 +756,7 @@ namespace PizzaBox.Storing.Repositories
             return presetPizza;
         }
 
+        // Provides UI for designing custom pizza.
         private static Pizza DesigningCustomPizza(ref int count)
         {
             Console.Clear();
@@ -864,6 +909,7 @@ namespace PizzaBox.Storing.Repositories
 
         }
 
+        // Adds selected toppings into a list.
         private static void AddToppings(List<string> toppings, string userInput)
         {
             Dictionary<string, string> numberToTopping = new Dictionary<string, string>()
@@ -886,6 +932,7 @@ namespace PizzaBox.Storing.Repositories
             }
         }
 
+        // Provides message for exceeding pizza toppings limit.
         private static void NumberOfToppingsExceeded()
         {
             Console.Clear();
@@ -893,6 +940,7 @@ namespace PizzaBox.Storing.Repositories
             Console.ReadLine();
         }
 
+        // Checks if a string contains only numerical strings.
         private static bool IsDigitsOnly(string str)
         {
             foreach (char c in str)
@@ -911,6 +959,7 @@ namespace PizzaBox.Storing.Repositories
             return Convert.ToInt32(str);
         }
 
+        // Provides UI for exceeding pizza amount limit.
         private static void PizzaLimitExceeded()
         {
             Console.Clear();
@@ -918,6 +967,7 @@ namespace PizzaBox.Storing.Repositories
             Console.ReadLine();
         }
 
+        // Provides UI for accessing store data for the admin.
         public static void AccessingStoreData(in Account currUser, in bool isMakingOrder)
         {
             Console.Clear();
@@ -970,6 +1020,7 @@ namespace PizzaBox.Storing.Repositories
             }
         }
 
+        // Provides UI for viewing completed orders given a STOREID.
         private static void ViewCompletedOrders(int storeID, string storeName)
         {
             var completedOrders = DataHandler.GetOrdersByStoreID(storeID);
@@ -977,7 +1028,7 @@ namespace PizzaBox.Storing.Repositories
             Console.Clear();
             Console.WriteLine($"Viewing completed order for {storeName}.");
             Console.WriteLine("");
-            Console.WriteLine("   Order  UserID  Pizzas   Cost       Date/Time");
+            Console.WriteLine("     Order  UserID  Pizzas    Cost      Date/Time");
             Console.WriteLine("-----------------------------------------------------");
             
             int i = 1;
@@ -990,11 +1041,12 @@ namespace PizzaBox.Storing.Repositories
                 string m = "$";
                 string totalCost = String.Format("{0:0.00}", order.TotalCost);
                 string orderID = String.Format("{0, -4}", order.OrderId);
-                string userID = String.Format("{0, -5}", order.UserId);
+                string userID = String.Format("{0, -6}", order.UserId);
                 string numPizzas = String.Format("{0, -5}", numOfPizza);
-                string cost = String.Format("{0, -5}", totalCost);
+                string cost = String.Format("{0, -6}", totalCost);
                 string dateTime = String.Format("{0, -5}", order.OrderDateTime);
-                Console.WriteLine($"{i}.  #{orderID}   {userID}  {numPizzas} {m}{cost}    {dateTime}");
+                string index = String.Format("{0, -4}", $"{i.ToString()}.");
+                Console.WriteLine($"{index}  #{orderID}   {userID}  {numPizzas}  {m}{cost}    {dateTime}");
 
                 i += 1;
             }
@@ -1002,6 +1054,7 @@ namespace PizzaBox.Storing.Repositories
             Console.ReadLine();
         }
 
+        // Provides UI for viewing sales given a STOREID.
         private static void ViewSales(int storeID, string storeName)
         {
             Console.Clear();
@@ -1066,6 +1119,7 @@ namespace PizzaBox.Storing.Repositories
             Console.ReadLine();
         }
 
+        // Provides UI for viewing users given STOREID.
         private static void ViewUsers(int storeID, string storeName)
         {
             //var users = DataHandler.GetUsersByStoreID(storeID);
@@ -1091,6 +1145,7 @@ namespace PizzaBox.Storing.Repositories
             Console.ReadLine();
         }
 
+        // Provides UI for viewing invertory given STOREID.
         private static void ViewInventory(int storeID, string storeName)
         {
             Console.Clear();
@@ -1098,6 +1153,7 @@ namespace PizzaBox.Storing.Repositories
             Console.ReadLine();
         }
 
+        // Provides UI for viewing order history given current user.
         public static void ViewingOrderHistory(in Account currUser)
         { 
             int userID = currUser.UserId;
@@ -1143,12 +1199,41 @@ namespace PizzaBox.Storing.Repositories
 
         }
 
-        //Provides message informing user that their response was invalid.
+        // Provides message informing user that their response was invalid.
         public static void InvalidResponse()
         {
             Console.Clear();
             Console.WriteLine("Invalid input. Please try again.");
             Console.ReadLine();
+        }
+
+        // Provides message that asks if user wants to create an account.
+        public static bool WantToCreateAccount()
+        {
+            bool validInput = false;
+            while (!validInput)
+            {
+                Console.Clear();
+                Console.WriteLine("It seems that this account does not exist.");
+                Console.WriteLine("\nWould you like to create an account? Yes (y) or No (n)");
+                string userInput = Console.ReadLine().ToLower();
+
+                switch (userInput)
+                {
+                    case "y":
+                        validInput = true;
+                        return true;
+                    case "n":
+                        validInput = true;
+                        return false;
+                    default:
+                        validInput = false;
+                        InvalidResponse();
+                        break;
+                }
+            }
+            return false;
+
         }
     }
 }

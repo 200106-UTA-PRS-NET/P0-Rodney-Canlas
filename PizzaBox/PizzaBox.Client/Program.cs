@@ -28,8 +28,15 @@ namespace PizzaBox.Client
                 }
                 while (!validUser)
                 {
-                    UIHandler.CreatingAccount();
-                    UIHandler.SigningIn(ref username, ref isAdmin, ref validUser, ref loggedIn);
+                    bool createAccount = UIHandler.WantToCreateAccount();
+                    if (createAccount)
+                    {
+                        UIHandler.CreatingAccount();
+                        UIHandler.SigningIn(ref username, ref isAdmin, ref validUser, ref loggedIn);
+                    } else
+                    {
+                        UIHandler.SigningIn(ref username, ref isAdmin, ref validUser, ref loggedIn);
+                    }
                 }
 
 

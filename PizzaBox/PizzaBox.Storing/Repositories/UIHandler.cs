@@ -1065,8 +1065,11 @@ namespace PizzaBox.Storing.Repositories
             Dictionary<string, int> pizzaSalesCounter = new Dictionary<string, int>();
             Dictionary<string, int> toppingSalesCounter = new Dictionary<string, int>();
 
+            decimal totalRevenue = 0;
+
             foreach (UserOrder order in completedOrders)
             {
+                totalRevenue += order.TotalCost;
                 List<Pizza> contentOrder = DataHandler.DeserializeFromXMLString(order.OrderContent);
                 
                 foreach (Pizza pizza in contentOrder)
@@ -1114,7 +1117,8 @@ namespace PizzaBox.Storing.Repositories
                 string thing = String.Format("{0, 8}", item);
                 Console.WriteLine($"     {amount}    {thing}");
             }
-
+            string revenue = String.Format("{0:0.00}", totalRevenue);
+            Console.WriteLine($"\nTotal Revenue: ${revenue}");
             Console.Write("\nPlease press Enter when finished viewing. ");
             Console.ReadLine();
         }

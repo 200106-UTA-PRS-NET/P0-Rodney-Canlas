@@ -23,7 +23,7 @@ namespace PizzaBox.Storing.Repositories
          */
         public static bool IsValidUser(string username, string password)
         {
-            if (db.Account.Any(a => a.Username == username && a.Passphrase == password))
+            if (db.Account.Any(a => a.Username.Equals(username) && a.Passphrase.Equals(password)))
             {
                 return true;
             }
@@ -41,6 +41,7 @@ namespace PizzaBox.Storing.Repositories
          */
         public static bool IsAdmin(string username, string password)
         {
+            //string userName = username.ToLower();
             if (username == "admin" && password == "password")
             {
                 return true;

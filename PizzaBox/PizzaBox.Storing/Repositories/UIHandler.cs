@@ -131,7 +131,7 @@ namespace PizzaBox.Storing.Repositories
             {
                 Console.Clear();
 
-                Console.WriteLine($"Welcome to the ADMIN menu, {currUser.Username}!");
+                Console.WriteLine($"Welcome to the ADMIN menu, {currUser.FirstName}!");
                 Console.WriteLine("1. Make an order.");
                 Console.WriteLine("2. Access store data.");
                 Console.WriteLine("3. View order history.");
@@ -164,7 +164,7 @@ namespace PizzaBox.Storing.Repositories
             {
                 Console.Clear();
 
-                Console.WriteLine($"Welcome to the USER menu, {currUser.Username}!");
+                Console.WriteLine($"Welcome to the USER menu, {currUser.FirstName}!");
                 Console.WriteLine("1. Make an order.");
                 Console.WriteLine("2. View order history.");
                 Console.WriteLine("0. Sign out.");
@@ -206,6 +206,7 @@ namespace PizzaBox.Storing.Repositories
             bool doneOrdering = false;
             string pizzaType = "";
             List<Pizza> orderContent = new List<Pizza>();
+            int pizzaCount = 0; //edited
 
             int storeID = ChoosingLocation(in currUser, in isMakingOrder);
             if (storeID == 0)
@@ -225,9 +226,9 @@ namespace PizzaBox.Storing.Repositories
                         case "1":
                             validResponse = true;
 
-                            int count = 0;
-                            Pizza preset = DesigningPresetPizza(ref count);
-                            StartingOrder(preset, orderContent, count);
+                            //int count = 0;
+                            Pizza preset = DesigningPresetPizza(ref pizzaCount);
+                            StartingOrder(preset, orderContent, pizzaCount);
 
                             bool validResponse1 = false;
                             while (!validResponse1)
@@ -279,9 +280,9 @@ namespace PizzaBox.Storing.Repositories
                         case "2":
                             validResponse = true;
 
-                            int count2 = 0;
-                            Pizza custom = DesigningCustomPizza(ref count2);
-                            StartingOrder(custom, orderContent, count2);
+                            //int count2 = 0;
+                            Pizza custom = DesigningCustomPizza(ref pizzaCount);
+                            StartingOrder(custom, orderContent, pizzaCount);
 
                             bool validResponse2 = false;
                             while (!validResponse2)
@@ -733,14 +734,14 @@ namespace PizzaBox.Storing.Repositories
                     InvalidResponse();
                 } else
                 {
-                    if (ToDigits(countInput) > 100)
+                    if (ToDigits(countInput) > 100 || (count + ToDigits(countInput)) > 100) //edited
                     {
                         validInput3 = false;
                         PizzaLimitExceeded();
                     } else
                     {
                         validInput3 = true;
-                        count = ToDigits(countInput);
+                        count = ToDigits(countInput); //edited
                     }
                 }
             }
@@ -884,7 +885,7 @@ namespace PizzaBox.Storing.Repositories
                 }
                 else
                 {
-                    if (ToDigits(countInput) > 100)
+                    if (ToDigits(countInput) > 100 || (count + ToDigits(countInput)) > 100) // edited
                     {
                         validInput3 = false;
                         PizzaLimitExceeded();
@@ -892,7 +893,7 @@ namespace PizzaBox.Storing.Repositories
                     else
                     {
                         validInput3 = true;
-                        count = ToDigits(countInput);
+                        count = ToDigits(countInput); // edited
                     }
                 }
             }
